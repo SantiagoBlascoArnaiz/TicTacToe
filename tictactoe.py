@@ -1,3 +1,4 @@
+#Adding comments
 import pygame
 import sys
 
