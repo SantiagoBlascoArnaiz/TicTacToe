@@ -27,15 +27,12 @@ BUTTON_HEIGHT = 1/10*HEIGHT
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("3 en raya")
 
-# Crear botones
-button_si = pygame.Rect((WIDTH- 2 * BOTTON_WIDTH)/3, 6/10*HEIGHT, BOTTON_WIDTH, BUTTON_HEIGHT)
-button_no = pygame.Rect((WIDTH- 2 * BOTTON_WIDTH)/3*2+BOTTON_WIDTH, 6/10*HEIGHT, BOTTON_WIDTH, BUTTON_HEIGHT)
-
 # Definir el tablero
 board = [['', '', ''], ['', '', ''], ['', '', '']]
 
 player = 'X'
 playing = True
+rematch = True
 
 # Para limpiar el tablero
 def cleanBoard():
@@ -68,52 +65,78 @@ def draw_board():
     pygame.display.update()
 
 # Dibuja un mensjae en el tablero
-def draw_message(message, x, y, color):
-    screen.fill((0, 0, 0))
+def draw_message(message):
+    screen.fill(BLACK)
     font = pygame.font.SysFont(None, 50)
-    text = font.render(message, True, (255, 255, 255))
+    text = font.render(message, True, WHITE)
     x = (WIDTH - text.get_width()) // 2
     y = (HEIGHT - text.get_height()) // 2
     screen.blit(text, (x, y))
     pygame.display.update()
 
-def draw_button(message, x, y, color, border_color=None):
+def draw_button(message, message_color, x, y, width, height, button_color, border_color=None):
+
+    button = pygame.Rect((x, y, width, height))
 
     font = pygame.font.Font(None, 36)
+    text = font.render(message, True, message_color)
 
+    pygame.draw.rect(screen, button_color, button, 0)
 
-    text = font.render("Sí", True, BLACK)
+    if border_color is not None:
+        pygame.draw.rect(screen, border_color, button, 4)
 
-    pygame.draw.rect(screen, GREEN, button_si, 0)
-    pygame.draw.rect(screen, DARK_GREEN, button_si, 4)
-    screen.blit(text_si, (button_si.x + ((BOTTON_WIDTH - text_si.get_width())/2), button_si.y + ((BUTTON_HEIGHT - text_si.get_height())/2)))
+    screen.blit(text, (button.x + ((width - text.get_width())/2), button.y + ((height - text.get_height())/2)))
+
+    return button
 
 # Dibuja botones y texto de rematch
 def draw_rematch(message):
-    screen.fill((0, 0, 0))
+
+    screen.fill(BLACK)
     font = pygame.font.SysFont(None, 50)
-    text = font.render(message, True, (255, 255, 255))
+    text = font.render(message, True, WHITE)
     x = (WIDTH - text.get_width()) // 2
     y = (HEIGHT/2 - text.get_height()) // 2
     screen.blit(text, (x, y))
 
-    font = pygame.font.Font(None, 36)
-
-
-    text_si = font.render("Sí", True, BLACK)
-
-    pygame.draw.rect(screen, GREEN, button_si, 0)
-    pygame.draw.rect(screen, DARK_GREEN, button_si, 4)
-    screen.blit(text_si, (button_si.x + ((BOTTON_WIDTH - text_si.get_width())/2), button_si.y + ((BUTTON_HEIGHT - text_si.get_height())/2)))
-
-
-    text_no = font.render("No", True, BLACK)
-
-    pygame.draw.rect(screen, RED, button_no, 0)
-    pygame.draw.rect(screen, DARK_RED, button_no, 4)
-    screen.blit(text_no, (button_no.x + ((BOTTON_WIDTH - text_no.get_width())/2), button_no.y + ((BUTTON_HEIGHT - text_no.get_height())/2)))
+    # Crear botones
+    button_si = draw_button("Sí", BLACK, (WIDTH- 2 * BOTTON_WIDTH)/3, 6/10*HEIGHT, BOTTON_WIDTH, BUTTON_HEIGHT, GREEN, DARK_GREEN)
+    button_no = draw_button("No", BLACK, (WIDTH- 2 * BOTTON_WIDTH)/3*2+BOTTON_WIDTH, 6/10*HEIGHT, BOTTON_WIDTH, BUTTON_HEIGHT, RED, DARK_RED)
 
     pygame.display.update()
+
+    rematch_logic(button_si, button_no)
+
+    
+
+def rematch_logic(button_si, button_no):
+    global playing
+    global rematch
+
+    for event in pygame.event.get():
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            # detectar si se hizo clic en el botón
+            if button_si.collidepoint(event.pos):
+                cleanBoard()
+                playing = True
+                rematch = False
+                break
+            elif button_no.collidepoint(event.pos):
+                sys.exit()
+                break
+        elif event.type == pygame.KEYDOWN:
+            if event.unicode.lower() == 's':
+                cleanBoard()
+                playing = True
+                rematch = False
+                break
+            elif event.unicode.lower() == 'n':
+                sys.exit()
+                break
+        elif event.type == pygame.QUIT:
+            sys.exit()
+
 
 # Definir la función para verificar si alguien ganó
 def verify_winner(player):
@@ -146,9 +169,11 @@ def mainGame():
     global playing
     global player
     global board
+    global rematch
 
     # Bucle principal del juego
     while playing:
+
         rematch = True
 
         for event in pygame.event.get():
@@ -189,28 +214,6 @@ def mainGame():
             pygame.time.wait(1000)
             while rematch:
                 draw_rematch('¿Quieres jugar de nuevo?')
-                for event in pygame.event.get():
-                    if event.type == pygame.MOUSEBUTTONDOWN:
-                        # detectar si se hizo clic en el botón
-                        if button_si.collidepoint(event.pos):
-                            cleanBoard()
-                            playing = True
-                            rematch = False
-                            break
-                        elif button_no.collidepoint(event.pos):
-                            sys.exit()
-                            break
-                    elif event.type == pygame.KEYDOWN:
-                        if event.unicode.lower() == 's':
-                            cleanBoard()
-                            playing = True
-                            rematch = False
-                            break
-                        elif event.unicode.lower() == 'n':
-                            sys.exit()
-                            break
-                    elif event.type == pygame.QUIT:
-                        sys.exit()
     # Fin del bucle principal
     pygame.quit()
     sys.exit()
