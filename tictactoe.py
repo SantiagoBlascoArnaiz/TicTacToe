@@ -130,80 +130,6 @@ def verificar_empate():
                 return False
     return True
 
-def mejor_jugada(tablero, jugador):
-    mejor_valor = -1000
-    mejor_jugada = (-1, -1)
-    
-    for i in range(3):
-        for j in range(3):
-            if tablero[i][j] == " ":
-                tablero[i][j] = jugador
-                valor = minimax(tablero, jugador)
-                tablero[i][j] = " "
-                if valor > mejor_valor:
-                    mejor_valor = valor
-                    mejor_jugada = (i, j)
-    
-    return mejor_jugada
-
-def ganador(tablero, jugador):
-    # Comprobamos líneas horizontales
-    for i in range(3):
-        if tablero[i][0] == jugador and tablero[i][1] == jugador and tablero[i][2] == jugador:
-            return True
-    
-    # Comprobamos líneas verticales
-    for j in range(3):
-        if tablero[0][j] == jugador and tablero[1][j] == jugador and tablero[2][j] == jugador:
-            return True
-    
-    # Comprobamos diagonales
-    if tablero[0][0] == jugador and tablero[1][1] == jugador and tablero[2][2] == jugador:
-        return True
-    
-    if tablero[0][2] == jugador and tablero[1][1] == jugador and tablero[2][0] == jugador:
-        return True
-    
-    return False
-
-def empate(tablero):
-    for i in range(3):
-        for j in range(3):
-            if tablero[i][j] == " ":
-                return False
-    return not ganador(tablero, "X") and not ganador(tablero, "O")
-
-
-
-def minimax(tablero, jugador):
-    if ganador(tablero, "X"):
-        return -10
-    if ganador(tablero, "O"):
-        return 10
-    if empate(tablero):
-        return 0
-    
-    if jugador == "O":
-        mejor_valor = -1000
-        for i in range(3):
-            for j in range(3):
-                if tablero[i][j] == " ":
-                    tablero[i][j] = jugador
-                    valor = minimax(tablero, "X")
-                    tablero[i][j] = " "
-                    mejor_valor = max(mejor_valor, valor)
-        return mejor_valor
-    
-    else:
-        mejor_valor = 1000
-        for i in range(3):
-            for j in range(3):
-                if tablero[i][j] == " ":
-                    tablero[i][j] = jugador
-                    valor = minimax(tablero, "O")
-                    tablero[i][j] = " "
-                    mejor_valor = min(mejor_valor, valor)
-        return mejor_valor
 
 # Definir la función principal del juego
 def juego():
@@ -229,7 +155,6 @@ def juego():
                         jugador = 'O'
                     else:
                         jugador = 'X'
-                    print(mejor_jugada(tablero, jugador))
 
             elif evento.type == pygame.KEYDOWN:
                 
