@@ -68,7 +68,7 @@ def draw_board():
     pygame.display.update()
 
 # Dibuja un mensjae en el tablero
-def draw_message(message):
+def draw_message(message, x, y, color):
     screen.fill((0, 0, 0))
     font = pygame.font.SysFont(None, 50)
     text = font.render(message, True, (255, 255, 255))
@@ -76,6 +76,17 @@ def draw_message(message):
     y = (HEIGHT - text.get_height()) // 2
     screen.blit(text, (x, y))
     pygame.display.update()
+
+def draw_button(message, x, y, color, border_color=None):
+
+    font = pygame.font.Font(None, 36)
+
+
+    text = font.render("Sí", True, BLACK)
+
+    pygame.draw.rect(screen, GREEN, button_si, 0)
+    pygame.draw.rect(screen, DARK_GREEN, button_si, 4)
+    screen.blit(text_si, (button_si.x + ((BOTTON_WIDTH - text_si.get_width())/2), button_si.y + ((BUTTON_HEIGHT - text_si.get_height())/2)))
 
 # Dibuja botones y texto de rematch
 def draw_rematch(message):
